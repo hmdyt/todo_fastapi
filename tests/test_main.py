@@ -36,7 +36,7 @@ async def async_client() -> AsyncClient:
         yield client
 
 @pytest.mark.asyncio
-async def test_create_and_read(async_client):
+async def test_create_and_read_and_delete(async_client):
     res = await async_client.post("/tasks", json={"title": "テストタスク"})
     assert res.status_code == starlette.status.HTTP_200_OK
     res_json = res.json()
@@ -48,6 +48,12 @@ async def test_create_and_read(async_client):
     assert res_json[0]["id"] == 1
     assert res_json[0]["title"] == "テストタスク"
     assert res_json[0]["done"] == False
+    
+    res = await async_client.delete("/tasks/1")
+    assert res.status_code == starlette.status.HTTP_200_OK
+    res = await async_client.get("/tasks")
+    assert res.status_code == starlette.status.HTTP_200_OK
+    assert res.json() == []
 
 @pytest.mark.asyncio
 async def test_task_update(async_client):
@@ -98,3 +104,23 @@ async def test_done(async_client):
         "title": "テストタスク",
         "done": False,
     }]
+    
+@pytest.mark.asyncio
+async def test_delete(async_client):
+    res = await async_client.post("/tasks", json={"title": "テストタスク"})
+    assert res.status_code == starlette.status.HTTP_200_OK
+    res = await async_client.put("/tasks/1/done")
+    assert res.status_code == starlette.status.HTTP_200_OK
+    res = await async_client.get("/tasks")
+    assert res.status_code == starlette.status.HTTP_200_OK
+    assert res.json() == [{
+        "id": 1,
+        "title": "テストタスク",
+        "done": True,
+    }]
+    
+    res = await async_client.delete("/tasks/1")
+    assert res.status_code == starlette.status.HTTP_200_OK
+    res = await async_client.get("/tasks")
+    assert res.status_code == starlette.status.HTTP_200_OK
+    assert res.json() == []

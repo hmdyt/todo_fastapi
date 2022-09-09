@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <title>TODO</title>
+</head>
+
+    <body>
+        <h1>TODO LIST</h1>
+        <div id="app">
+            <div>
+                <input type="text" v-model="formValue">
+                <button @click="postTask(formValue)">register</button>
+            </div>
+            <h2>TODO</h2>
+            <ul>
+                <li v-for="todo in todoList" v-show="!todo.done">
+                    <button @click="markAsDone(todo.id)">DONE</button>
+                    {{todo.title}}
+                </li>
+            </ul>
+            <h2>DONE</h2>
+            <ul>
+                <li v-for="todo in todoList" v-show="todo.done">
+                    <button @click="deleteTask(todo.id)">DEL</button>
+                    <button @click="markAsTodo(todo.id)">TODO</button>
+                    {{todo.title}}
+                </li>
+            </ul>
+        </div>
+    </body>
+    <script src="index.js"></script>
+</html>
